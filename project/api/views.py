@@ -9,15 +9,27 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .permissions import IsOwner
+from drf_spectacular.utils import extend_schema
+from rest_framework.generics import GenericAPIView
 
 
-class HelloView(APIView):
+class HelloView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        summary="hello",
+        request=None,
+        responses={200: None},
+    )
     def get(self, request):
         return Response({'message':'success'})
 
 class RegisterView(APIView):
+    @extend_schema(
+        summary="register",
+        request=UserRegisterSerializer,
+        responses={201: UserRegisterSerializer},
+    )
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
